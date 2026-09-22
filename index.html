@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cálculo de créditos de disciplinas</title>
+  <title>Cálculo de créditos de disciplinas de pós-graduação - ICMC-USP</title>
   <style>
     /* =========================================================
        ESTILIZAÇÃO
@@ -153,7 +153,7 @@
     <section class="card">
       <h1>Cálculo de créditos de disciplinas</h1>
       <p class="intro">
-        Preencha os dados da disciplina. Os resultados são calculados automaticamente.
+        Preencha com os números pretendidos para cada categoria. Os resultados serão calculados automaticamente a cada alteração para que você verifique a combinação desejada.
       </p>
 
       <div class="field">
@@ -168,7 +168,7 @@
 
       <div class="field">
         <label for="outras">Número de horas semanais de outras atividades</label>
-        <span class="help">Aulas práticas, seminários e outros.</span>
+        <span class="help">Aulas práticas, seminários e outros se houver.</span>
         <input id="outras" type="number" min="0" step="0.01" value="8">
       </div>
 
@@ -200,7 +200,7 @@
       </div>
 
       <div class="footer">
-        Os resultados deverão ser utilizados para o preenchimento da proposta.
+        Os resultados aqui apresentados são apenas de apoio para garantirem a adequação da conta e o preenchimento da proposta deverá ser feito no formulário.
       </div>
     </section>
   </main>
@@ -261,7 +261,7 @@
       } else {
         status.className = "status warning";
         status.textContent =
-          "Atenção: o resultado do número de créditos não é um número inteiro.";
+          "Atenção: o resultado do número de créditos não é um número inteiro e portanto uma ou mais parciais precisam ser alteradas.";
       }
     }
 
