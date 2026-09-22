@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cálculo de créditos de disciplinas</title>
+  <style>
+    /* =========================================================
+       ESTILIZAÇÃO
+       Você pode alterar livremente cores, fontes, tamanhos etc.
+       ========================================================= */
+    :root {
+      --primary: #4f6475;
+      --primary-dark: #394c5b;
+      --background: #f4f6f8;
+      --card: #ffffff;
+      --text: #263238;
+      --muted: #66757f;
+      --border: #d9e0e5;
+      --result: #eef3f6;
+      --success: #2f6f4e;
+      --warning: #9a6a16;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--background);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.45;
+    }
+
+    .container {
+      width: min(760px, calc(100% - 32px));
+      margin: 40px auto;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 8px 30px rgba(38, 50, 56, 0.08);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(24px, 5vw, 32px);
+      color: var(--primary-dark);
+    }
+
+    .intro {
+      margin: 0 0 26px;
+      color: var(--muted);
+    }
+
+    .field {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 7px;
+    }
+
+    .help {
+      display: block;
+      margin-top: 5px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    input {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 16px;
+      color: var(--text);
+      background: white;
+    }
+
+    input:focus {
+      outline: 3px solid rgba(79, 100, 117, 0.15);
+      border-color: var(--primary);
+    }
+
+    .results {
+      margin-top: 28px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .result-box {
+      background: var(--result);
+      border-radius: 14px;
+      padding: 18px;
+    }
+
+    .result-label {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .result-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .observation {
+      margin-top: 22px;
+      padding: 16px;
+      border-left: 4px solid var(--primary);
+      background: #f7f9fa;
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .status {
+      margin-top: 14px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .status.ok { color: var(--success); }
+    .status.warning { color: var(--warning); }
+
+    .footer {
+      margin-top: 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .container { margin: 20px auto; }
+      .card { padding: 20px; }
+      .results { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <section class="card">
+      <h1>Cálculo de créditos de disciplinas</h1>
+      <p class="intro">
+        Preencha os dados da disciplina. Os resultados são calculados automaticamente.
+      </p>
+
+      <div class="field">
+        <label for="semanas">Duração em semanas da disciplina</label>
+        <input id="semanas" type="number" min="0" step="1" value="12">
+      </div>
+
+      <div class="field">
+        <label for="teoricas">Número de horas semanais de aulas teóricas da disciplina</label>
+        <input id="teoricas" type="number" min="0" step="0.01" value="4">
+      </div>
+
+      <div class="field">
+        <label for="outras">Número de horas semanais de outras atividades</label>
+        <span class="help">Aulas práticas, seminários e outros.</span>
+        <input id="outras" type="number" min="0" step="0.01" value="8">
+      </div>
+
+      <div class="field">
+        <label for="estudo">Número de horas semanais de estudo da disciplina</label>
+        <input id="estudo" type="number" min="0" step="0.01" value="8">
+      </div>
+
+      <div class="results">
+        <div class="result-box">
+          <div class="result-label">Carga horária total da disciplina</div>
+          <div class="result-value" id="cargaTotal">240</div>
+        </div>
+
+        <div class="result-box">
+          <div class="result-label">Número de créditos da disciplina</div>
+          <div class="result-value" id="creditos">16</div>
+        </div>
+      </div>
+
+      <div class="status ok" id="status">
+        O resultado do número de créditos é um número inteiro.
+      </div>
+
+      <div class="observation">
+        <strong>Observação:</strong><br>
+        O número de créditos se dá por: carga horária total da disciplina
+        dividida por 15. Este resultado deve obrigatoriamente ser um número inteiro.
+      </div>
+
+      <div class="footer">
+        Os cálculos seguem a lógica da planilha original.
+      </div>
+    </section>
+  </main>
+
+  <script>
+    /* =========================================================
+       CÁLCULOS
+       Esta é a parte mais importante para futuras alterações.
+       =========================================================
+
+       Fórmula original da planilha:
+       Carga horária total = (horas teóricas + outras atividades
+                              + horas de estudo) × semanas
+
+       Fórmula original da planilha:
+       Créditos = carga horária total ÷ 15
+
+       NÃO arredondamos os créditos automaticamente.
+       Isso preserva a regra da planilha: o resultado deve ser
+       obrigatoriamente um número inteiro.
+       ========================================================= */
+
+    const campos = [
+      document.getElementById("semanas"),
+      document.getElementById("teoricas"),
+      document.getElementById("outras"),
+      document.getElementById("estudo")
+    ];
+
+    function numero(id) {
+      return Number(document.getElementById(id).value) || 0;
+    }
+
+    function calcular() {
+      const semanas = numero("semanas");
+      const teoricas = numero("teoricas");
+      const outras = numero("outras");
+      const estudo = numero("estudo");
+
+      // Equivalente à fórmula B6 da planilha:
+      const cargaTotal = (teoricas + outras + estudo) * semanas;
+
+      // Equivalente à fórmula B7 da planilha:
+      const creditos = cargaTotal / 15;
+
+      document.getElementById("cargaTotal").textContent =
+        formatar(cargaTotal);
+
+      document.getElementById("creditos").textContent =
+        formatar(creditos);
+
+      const status = document.getElementById("status");
+
+      if (Number.isInteger(creditos)) {
+        status.className = "status ok";
+        status.textContent =
+          "O resultado do número de créditos é um número inteiro.";
+      } else {
+        status.className = "status warning";
+        status.textContent =
+          "Atenção: o resultado do número de créditos não é um número inteiro.";
+      }
+    }
+
+    function formatar(valor) {
+      return Number.isInteger(valor)
+        ? String(valor)
+        : valor.toLocaleString("pt-BR", {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2
+          });
+    }
+
+    campos.forEach(campo => campo.addEventListener("input", calcular));
+
+    // Calcula os valores iniciais.
+    calcular();
+  </script>
+</body>
+</html>
